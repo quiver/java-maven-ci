@@ -1,7 +1,7 @@
 name: maven demo
 on:
   push:
-    branches: [develop]
+    branches: [main]
 
 jobs:
   task-formatter:
