@@ -1,10 +1,18 @@
 name: maven jar build & upload demo
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'ブランチを選択してください'
+        required: true
+        default: 'develop'
+        type: choice
+        options:
+          - develop
+          - main
 
 jobs:
-  task-formatter:
+  maven-build-and-upload:
     runs-on: ubuntu-latest
 
     steps:
