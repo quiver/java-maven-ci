@@ -1,30 +1,21 @@
-# 概要
+# Maven JAR Build & Upload Demo ワークフロー
 
-xxx
+MavenでJARファイルを作成し、GitHub Actionsで自動ビルド・アップロードするサンプルです。
 
-Java/Antを使ったCIのデモ
+## 使用方法
 
-GitHubへのpush時に、 `.github/workflows/ant.yml` で定義したCIが実行される
+1. GitHubの **Actions** タブを開く
+2. **maven jar build & upload demo** を選択
+3. **Run workflow** で手動実行し、ブランチを選択
 
-より具体的には `$ ant run` を実行
+## 処理内容
 
-この延長上で、`test` や `build` などのタスクを定義すれば、push や merge 時にそれらタスクを実行できる
+- `mvn package` でJARファイル作成
+- `target/*.jar` を `Jar.zip` に圧縮してアップロード
 
-フォーマッターを実行し、ステータスコードによって、コーディング規約を満たさない場合に、エラーとすることも可能
+## ダウンロード
 
-## デモ1
+実行完了後、Actionsページから `Jar.zip` をダウンロードできます。
 
-`.github/workflows/ant.yml` の `java-version:` のバージョンを11や17や21などにかえる。
 
-CIは成功(グリーン)し、テスト結果のJavaのバージョンが適宜変わる
-
-## デモ2
-
-`src/com/example/HelloWorld.java` をコンパイルが失敗するようにわざと書き換える
-
-CIは失敗する(レッド)
-
-# 参考
-
-- https://docs.github.com/ja/actions/use-cases-and-examples/building-and-testing/building-and-testing-java-with-ant
-# java-maven-ci
+![GitHub Actions結果](ga-job-result.png)
