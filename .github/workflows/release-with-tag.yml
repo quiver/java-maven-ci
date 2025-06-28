@@ -21,7 +21,7 @@ jobs:
         architecture: x64
 
     - name: Generate timestamp tag
-      run: echo "TAG_NAME=v$(date +'%Y%m%d-%H%M')" >> ${GITHUB_ENV}
+      run: echo "TAG_NAME=v$(TZ=Asia/Tokyo date +'%Y%m%d-%H%M')" >> ${GITHUB_ENV}
 
     - name: Build with Maven
       run: mvn package
