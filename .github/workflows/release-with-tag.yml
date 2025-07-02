@@ -23,28 +23,29 @@ jobs:
         distribution: 'temurin'
         architecture: x64
 
-    - name: Set branch-specific tag
+    - name: Build with Maven
+      run: mvn package
+
+    - name: 現在の日付でリリース名を作成
       run: |
         BRANCH_NAME=${{ github.ref_name }}
+        CURRENT_DATE=$(TZ=Asia/Tokyo date +'%Y-%m-%d %H:%M')
         echo "TAG_NAME=latest/${BRANCH_NAME}" >> ${GITHUB_ENV}
-        echo "RELEASE_NAME=Latest Release (${BRANCH_NAME})" >> ${GITHUB_ENV}
+        echo "RELEASE_NAME=Latest Release (${BRANCH_NAME}) - ${CURRENT_DATE}" >> ${GITHUB_ENV}
 
-    - name: Delete existing tag and release
+    - name: 既存のタグとリリースを削除
       run: |
         gh release delete ${{ env.TAG_NAME }} --yes || true
         git push origin :refs/tags/${{ env.TAG_NAME }} || true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Build with Maven
-      run: mvn package
-
-    - name: Create branch-specific latest tag
+    - name: タグの更新
       run: |
         git tag ${{ env.TAG_NAME }}
         git push origin ${{ env.TAG_NAME }}
 
-    - name: Create GitHub Release
+    - name: リリースの更新
       uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ env.TAG_NAME }}
