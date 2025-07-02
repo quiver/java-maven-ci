@@ -1,7 +1,10 @@
 name: Release GA
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - develop
 
 jobs:
   release:
@@ -20,15 +23,31 @@ jobs:
         distribution: 'temurin'
         architecture: x64
 
-    - name: Generate timestamp tag
-      run: echo "TAG_NAME=v$(TZ=Asia/Tokyo date +'%Y%m%d-%H%M')" >> ${GITHUB_ENV}
+    - name: Set branch-specific tag
+      run: |
+        BRANCH_NAME=${{ github.ref_name }}
+        echo "TAG_NAME=latest/${BRANCH_NAME}" >> ${GITHUB_ENV}
+        echo "RELEASE_NAME=Latest Release (${BRANCH_NAME})" >> ${GITHUB_ENV}
+
+    - name: Delete existing tag and release
+      run: |
+        gh release delete ${{ env.TAG_NAME }} --yes || true
+        git push origin :refs/tags/${{ env.TAG_NAME }} || true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Build with Maven
       run: mvn package
+
+    - name: Create branch-specific latest tag
+      run: |
+        git tag ${{ env.TAG_NAME }}
+        git push origin ${{ env.TAG_NAME }}
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ env.TAG_NAME }}
+        name: ${{ env.RELEASE_NAME }}
         files: target/*.jar
         generate_release_notes: true
