@@ -2,8 +2,6 @@
 
 MavenでJARファイルを作成し、GitHub Actionsで自動ビルド・アップロードするサンプルです。
 
-main
-
 ## 使用方法
 
 1. GitHubの **Actions** タブを開く
