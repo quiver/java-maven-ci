@@ -60,6 +60,8 @@ jobs:
 
     - name: 新しいlatestタグを作成
       run: |
+        # ローカルタグが残っている場合は削除
+        git tag -d ${{ env.TAG_NAME }} || true
         git tag ${{ env.TAG_NAME }}
         git push origin ${{ env.TAG_NAME }}
 
