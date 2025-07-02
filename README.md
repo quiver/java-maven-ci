@@ -17,5 +17,4 @@ MavenでJARファイルを作成し、GitHub Actionsで自動ビルド・アッ�
 
 実行完了後、Actionsページから `Jar.zip` をダウンロードできます。
 
-
 ![GitHub Actions結果](ga-job-result.png)
