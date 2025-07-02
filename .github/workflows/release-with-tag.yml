@@ -50,7 +50,7 @@ jobs:
           git push origin ${PREV_TAG_NAME}
           
           # 古いlatest tagを削除
-          gh release delete ${{ env.TAG_NAME }} --yes || true
+          # gh release delete ${{ env.TAG_NAME }} --yes || true
           git push origin :refs/tags/${{ env.TAG_NAME }} || true
         fi
         
