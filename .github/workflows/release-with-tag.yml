@@ -33,14 +33,32 @@ jobs:
         echo "TAG_NAME=latest/${BRANCH_NAME}" >> ${GITHUB_ENV}
         echo "RELEASE_NAME=Latest Release (${BRANCH_NAME}) - ${CURRENT_DATE}" >> ${GITHUB_ENV}
 
-    - name: 既存のタグとリリースを削除
+    - name: 既存のlatestタグをprevにリネーム
       run: |
-        gh release delete ${{ env.TAG_NAME }} --yes || true
-        git push origin :refs/tags/${{ env.TAG_NAME }} || true
+        BRANCH_NAME=${{ github.ref_name }}
+        PREV_TAG_NAME="prev/${BRANCH_NAME}"
+        
+        # 既存のlatest tagが存在するかチェック
+        if git ls-remote --tags origin | grep -q "refs/tags/${{ env.TAG_NAME }}"; then
+          # 既存のprev tagとリリースを削除
+          gh release delete ${PREV_TAG_NAME} --yes || true
+          git push origin :refs/tags/${PREV_TAG_NAME} || true
+          
+          # 既存のlatest tagをprevにリネーム
+          git fetch origin ${{ env.TAG_NAME }}:${{ env.TAG_NAME }} || true
+          git tag ${PREV_TAG_NAME} ${{ env.TAG_NAME }}
+          git push origin ${PREV_TAG_NAME}
+          
+          # 古いlatest tagを削除
+          gh release delete ${{ env.TAG_NAME }} --yes || true
+          git push origin :refs/tags/${{ env.TAG_NAME }} || true
+        fi
+        
+        echo "PREV_TAG_NAME=${PREV_TAG_NAME}" >> ${GITHUB_ENV}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: タグの更新
+    - name: 新しいlatestタグを作成
       run: |
         git tag ${{ env.TAG_NAME }}
         git push origin ${{ env.TAG_NAME }}
